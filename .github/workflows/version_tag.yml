@@ -6,7 +6,7 @@ on:
 
 name: create-release
 
-permissions: read-all|write-all
+permissions: write-all
 
 jobs:
   build:
