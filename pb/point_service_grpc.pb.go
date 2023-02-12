@@ -27,6 +27,7 @@ type PointServiceClient interface {
 	Create(ctx context.Context, in *Point, opts ...grpc.CallOption) (*Point, error)
 	Update(ctx context.Context, in *Point, opts ...grpc.CallOption) (*Point, error)
 	Delete(ctx context.Context, in *PointUUID, opts ...grpc.CallOption) (*DeleteResponse, error)
+	GetOrCreate(ctx context.Context, in *Point, opts ...grpc.CallOption) (*Point, error)
 	GetAllByEquipUUID(ctx context.Context, in *EquipUUID, opts ...grpc.CallOption) (*PointList, error)
 }
 
@@ -83,6 +84,15 @@ func (c *pointServiceClient) Delete(ctx context.Context, in *PointUUID, opts ...
 	return out, nil
 }
 
+func (c *pointServiceClient) GetOrCreate(ctx context.Context, in *Point, opts ...grpc.CallOption) (*Point, error) {
+	out := new(Point)
+	err := c.cc.Invoke(ctx, "/pb.PointService/GetOrCreate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *pointServiceClient) GetAllByEquipUUID(ctx context.Context, in *EquipUUID, opts ...grpc.CallOption) (*PointList, error) {
 	out := new(PointList)
 	err := c.cc.Invoke(ctx, "/pb.PointService/GetAllByEquipUUID", in, out, opts...)
@@ -101,6 +111,7 @@ type PointServiceServer interface {
 	Create(context.Context, *Point) (*Point, error)
 	Update(context.Context, *Point) (*Point, error)
 	Delete(context.Context, *PointUUID) (*DeleteResponse, error)
+	GetOrCreate(context.Context, *Point) (*Point, error)
 	GetAllByEquipUUID(context.Context, *EquipUUID) (*PointList, error)
 	mustEmbedUnimplementedPointServiceServer()
 }
@@ -123,6 +134,9 @@ func (UnimplementedPointServiceServer) Update(context.Context, *Point) (*Point, 
 }
 func (UnimplementedPointServiceServer) Delete(context.Context, *PointUUID) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedPointServiceServer) GetOrCreate(context.Context, *Point) (*Point, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOrCreate not implemented")
 }
 func (UnimplementedPointServiceServer) GetAllByEquipUUID(context.Context, *EquipUUID) (*PointList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllByEquipUUID not implemented")
@@ -230,6 +244,24 @@ func _PointService_Delete_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PointService_GetOrCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Point)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PointServiceServer).GetOrCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.PointService/GetOrCreate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PointServiceServer).GetOrCreate(ctx, req.(*Point))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PointService_GetAllByEquipUUID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EquipUUID)
 	if err := dec(in); err != nil {
@@ -274,6 +306,10 @@ var PointService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _PointService_Delete_Handler,
+		},
+		{
+			MethodName: "GetOrCreate",
+			Handler:    _PointService_GetOrCreate_Handler,
 		},
 		{
 			MethodName: "GetAllByEquipUUID",

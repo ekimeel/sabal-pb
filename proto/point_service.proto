@@ -13,6 +13,7 @@ service PointService {
   rpc Create (Point) returns (Point) {}
   rpc Update (Point) returns (Point) {}
   rpc Delete (PointUUID) returns (DeleteResponse) {}
+  rpc GetOrCreate (Point) returns (Point) {}
   /**/
   rpc GetAllByEquipUUID (EquipUUID) returns (PointList) {}
 }

@@ -27,6 +27,7 @@ type EquipServiceClient interface {
 	Create(ctx context.Context, in *Equip, opts ...grpc.CallOption) (*Equip, error)
 	Update(ctx context.Context, in *Equip, opts ...grpc.CallOption) (*Equip, error)
 	Delete(ctx context.Context, in *EquipUUID, opts ...grpc.CallOption) (*DeleteResponse, error)
+	GetOrCreate(ctx context.Context, in *Equip, opts ...grpc.CallOption) (*Equip, error)
 }
 
 type equipServiceClient struct {
@@ -82,6 +83,15 @@ func (c *equipServiceClient) Delete(ctx context.Context, in *EquipUUID, opts ...
 	return out, nil
 }
 
+func (c *equipServiceClient) GetOrCreate(ctx context.Context, in *Equip, opts ...grpc.CallOption) (*Equip, error) {
+	out := new(Equip)
+	err := c.cc.Invoke(ctx, "/pb.EquipService/GetOrCreate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EquipServiceServer is the server API for EquipService service.
 // All implementations must embed UnimplementedEquipServiceServer
 // for forward compatibility
@@ -91,6 +101,7 @@ type EquipServiceServer interface {
 	Create(context.Context, *Equip) (*Equip, error)
 	Update(context.Context, *Equip) (*Equip, error)
 	Delete(context.Context, *EquipUUID) (*DeleteResponse, error)
+	GetOrCreate(context.Context, *Equip) (*Equip, error)
 	mustEmbedUnimplementedEquipServiceServer()
 }
 
@@ -112,6 +123,9 @@ func (UnimplementedEquipServiceServer) Update(context.Context, *Equip) (*Equip, 
 }
 func (UnimplementedEquipServiceServer) Delete(context.Context, *EquipUUID) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedEquipServiceServer) GetOrCreate(context.Context, *Equip) (*Equip, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOrCreate not implemented")
 }
 func (UnimplementedEquipServiceServer) mustEmbedUnimplementedEquipServiceServer() {}
 
@@ -216,6 +230,24 @@ func _EquipService_Delete_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EquipService_GetOrCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Equip)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EquipServiceServer).GetOrCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.EquipService/GetOrCreate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EquipServiceServer).GetOrCreate(ctx, req.(*Equip))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EquipService_ServiceDesc is the grpc.ServiceDesc for EquipService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +274,10 @@ var EquipService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _EquipService_Delete_Handler,
+		},
+		{
+			MethodName: "GetOrCreate",
+			Handler:    _EquipService_GetOrCreate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

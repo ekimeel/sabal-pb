@@ -12,4 +12,5 @@ service EquipService {
   rpc Create (Equip) returns (Equip) {}
   rpc Update (Equip) returns (Equip) {}
   rpc Delete (EquipUUID) returns (DeleteResponse) {}
+  rpc GetOrCreate (Equip) returns (Equip) {}
 }
