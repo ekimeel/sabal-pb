@@ -22,11 +22,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EquipServiceClient interface {
-	Get(ctx context.Context, in *EquipUUID, opts ...grpc.CallOption) (*Equip, error)
+	Get(ctx context.Context, in *EquipId, opts ...grpc.CallOption) (*Equip, error)
 	GetAll(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*EquipList, error)
 	Create(ctx context.Context, in *Equip, opts ...grpc.CallOption) (*Equip, error)
 	Update(ctx context.Context, in *Equip, opts ...grpc.CallOption) (*Equip, error)
-	Delete(ctx context.Context, in *EquipUUID, opts ...grpc.CallOption) (*DeleteResponse, error)
+	Delete(ctx context.Context, in *EquipId, opts ...grpc.CallOption) (*DeleteResponse, error)
 	GetOrCreate(ctx context.Context, in *Equip, opts ...grpc.CallOption) (*Equip, error)
 }
 
@@ -38,7 +38,7 @@ func NewEquipServiceClient(cc grpc.ClientConnInterface) EquipServiceClient {
 	return &equipServiceClient{cc}
 }
 
-func (c *equipServiceClient) Get(ctx context.Context, in *EquipUUID, opts ...grpc.CallOption) (*Equip, error) {
+func (c *equipServiceClient) Get(ctx context.Context, in *EquipId, opts ...grpc.CallOption) (*Equip, error) {
 	out := new(Equip)
 	err := c.cc.Invoke(ctx, "/pb.EquipService/Get", in, out, opts...)
 	if err != nil {
@@ -74,7 +74,7 @@ func (c *equipServiceClient) Update(ctx context.Context, in *Equip, opts ...grpc
 	return out, nil
 }
 
-func (c *equipServiceClient) Delete(ctx context.Context, in *EquipUUID, opts ...grpc.CallOption) (*DeleteResponse, error) {
+func (c *equipServiceClient) Delete(ctx context.Context, in *EquipId, opts ...grpc.CallOption) (*DeleteResponse, error) {
 	out := new(DeleteResponse)
 	err := c.cc.Invoke(ctx, "/pb.EquipService/Delete", in, out, opts...)
 	if err != nil {
@@ -96,11 +96,11 @@ func (c *equipServiceClient) GetOrCreate(ctx context.Context, in *Equip, opts ..
 // All implementations must embed UnimplementedEquipServiceServer
 // for forward compatibility
 type EquipServiceServer interface {
-	Get(context.Context, *EquipUUID) (*Equip, error)
+	Get(context.Context, *EquipId) (*Equip, error)
 	GetAll(context.Context, *ListRequest) (*EquipList, error)
 	Create(context.Context, *Equip) (*Equip, error)
 	Update(context.Context, *Equip) (*Equip, error)
-	Delete(context.Context, *EquipUUID) (*DeleteResponse, error)
+	Delete(context.Context, *EquipId) (*DeleteResponse, error)
 	GetOrCreate(context.Context, *Equip) (*Equip, error)
 	mustEmbedUnimplementedEquipServiceServer()
 }
@@ -109,7 +109,7 @@ type EquipServiceServer interface {
 type UnimplementedEquipServiceServer struct {
 }
 
-func (UnimplementedEquipServiceServer) Get(context.Context, *EquipUUID) (*Equip, error) {
+func (UnimplementedEquipServiceServer) Get(context.Context, *EquipId) (*Equip, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedEquipServiceServer) GetAll(context.Context, *ListRequest) (*EquipList, error) {
@@ -121,7 +121,7 @@ func (UnimplementedEquipServiceServer) Create(context.Context, *Equip) (*Equip, 
 func (UnimplementedEquipServiceServer) Update(context.Context, *Equip) (*Equip, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedEquipServiceServer) Delete(context.Context, *EquipUUID) (*DeleteResponse, error) {
+func (UnimplementedEquipServiceServer) Delete(context.Context, *EquipId) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedEquipServiceServer) GetOrCreate(context.Context, *Equip) (*Equip, error) {
@@ -141,7 +141,7 @@ func RegisterEquipServiceServer(s grpc.ServiceRegistrar, srv EquipServiceServer)
 }
 
 func _EquipService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EquipUUID)
+	in := new(EquipId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -153,7 +153,7 @@ func _EquipService_Get_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: "/pb.EquipService/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EquipServiceServer).Get(ctx, req.(*EquipUUID))
+		return srv.(EquipServiceServer).Get(ctx, req.(*EquipId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -213,7 +213,7 @@ func _EquipService_Update_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _EquipService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EquipUUID)
+	in := new(EquipId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -225,7 +225,7 @@ func _EquipService_Delete_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/pb.EquipService/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EquipServiceServer).Delete(ctx, req.(*EquipUUID))
+		return srv.(EquipServiceServer).Delete(ctx, req.(*EquipId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
