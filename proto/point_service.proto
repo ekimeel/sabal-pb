@@ -8,11 +8,12 @@ import "point.proto";
 import "equip.proto";
 
 service PointService {
-  rpc Get (PointUUID) returns (Point) {}
+  rpc Get (PointId) returns (Point) {}
   rpc GetAll (ListRequest) returns (PointList) {}
   rpc Create (Point) returns (Point) {}
   rpc Update (Point) returns (Point) {}
-  rpc Delete (PointUUID) returns (DeleteResponse) {}
+  rpc Delete (PointId) returns (DeleteResponse) {}
+  rpc GetOrCreate (Point) returns (Point) {}
   /**/
-  rpc GetAllByEquipUUID (EquipUUID) returns (PointList) {}
+  rpc GetAllByEquip (EquipId) returns (PointList) {}
 }
