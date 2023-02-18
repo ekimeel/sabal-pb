@@ -8,7 +8,8 @@ import "google/protobuf/timestamp.proto";
 message Point {
   uint32 id = 1;
   uint32 equipId = 2;
-  google.protobuf.Timestamp lastUpdated = 3;
+  string name = 3;
+  google.protobuf.Timestamp lastUpdated = 4;
 }
 
 message PointList {
