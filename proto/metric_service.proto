@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb;
+option go_package = "github.com/ekimeel/pb";
+
+import "point.proto";
+import "metric.proto";
+
+service MetricService {
+  rpc Write (Metric) returns (MetricWriteResponse) {}
+  rpc Poll (PointId) returns (Metric) {}
+  rpc Select (MetricRequest) returns (MetricList) {}
+}

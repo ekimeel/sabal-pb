@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package pb;
+option go_package = "github.com/ekimeel/pb";
+
+import "google/protobuf/timestamp.proto";
+
+message Metric {
+  uint32 pointId = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  float value = 3;
+}
+
+message MetricRequest {
+  uint32 pointId = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+}
+
+message MetricList {
+  repeated Metric Metrics = 1;
+}
+
+message MetricWriteResponse {
+  bool accepted = 1;
+}
