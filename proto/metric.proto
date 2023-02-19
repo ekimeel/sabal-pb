@@ -8,7 +8,7 @@ import "google/protobuf/timestamp.proto";
 message Metric {
   uint32 pointId = 1;
   google.protobuf.Timestamp timestamp = 2;
-  float value = 3;
+  double value = 3;
 }
 
 message MetricRequest {
