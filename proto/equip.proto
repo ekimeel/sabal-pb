@@ -3,12 +3,9 @@ syntax = "proto3";
 package pb;
 option go_package = "github.com/ekimeel/pb";
 
-import "google/protobuf/timestamp.proto";
-
 message Equip {
   uint32 id = 1;
   string name = 2;
-  google.protobuf.Timestamp lastUpdated = 3;
 }
 
 message EquipList {
