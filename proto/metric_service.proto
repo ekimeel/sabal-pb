@@ -8,6 +8,7 @@ import "metric.proto";
 
 service MetricService {
   rpc Write (Metric) returns (MetricWriteResponse) {}
+  rpc WriteList (MetricList) returns (MetricWriteResponse) {}
   rpc Poll (PointId) returns (Metric) {}
   rpc Select (MetricRequest) returns (MetricList) {}
 }
