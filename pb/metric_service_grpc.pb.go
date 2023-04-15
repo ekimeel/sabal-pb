@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MetricServiceClient interface {
 	Write(ctx context.Context, in *Metric, opts ...grpc.CallOption) (*MetricWriteResponse, error)
+	WriteList(ctx context.Context, in *MetricList, opts ...grpc.CallOption) (*MetricWriteResponse, error)
 	Poll(ctx context.Context, in *PointId, opts ...grpc.CallOption) (*Metric, error)
 	Select(ctx context.Context, in *MetricRequest, opts ...grpc.CallOption) (*MetricList, error)
 }
@@ -38,6 +39,15 @@ func NewMetricServiceClient(cc grpc.ClientConnInterface) MetricServiceClient {
 func (c *metricServiceClient) Write(ctx context.Context, in *Metric, opts ...grpc.CallOption) (*MetricWriteResponse, error) {
 	out := new(MetricWriteResponse)
 	err := c.cc.Invoke(ctx, "/pb.MetricService/Write", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *metricServiceClient) WriteList(ctx context.Context, in *MetricList, opts ...grpc.CallOption) (*MetricWriteResponse, error) {
+	out := new(MetricWriteResponse)
+	err := c.cc.Invoke(ctx, "/pb.MetricService/WriteList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,6 +77,7 @@ func (c *metricServiceClient) Select(ctx context.Context, in *MetricRequest, opt
 // for forward compatibility
 type MetricServiceServer interface {
 	Write(context.Context, *Metric) (*MetricWriteResponse, error)
+	WriteList(context.Context, *MetricList) (*MetricWriteResponse, error)
 	Poll(context.Context, *PointId) (*Metric, error)
 	Select(context.Context, *MetricRequest) (*MetricList, error)
 	mustEmbedUnimplementedMetricServiceServer()
@@ -78,6 +89,9 @@ type UnimplementedMetricServiceServer struct {
 
 func (UnimplementedMetricServiceServer) Write(context.Context, *Metric) (*MetricWriteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Write not implemented")
+}
+func (UnimplementedMetricServiceServer) WriteList(context.Context, *MetricList) (*MetricWriteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WriteList not implemented")
 }
 func (UnimplementedMetricServiceServer) Poll(context.Context, *PointId) (*Metric, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Poll not implemented")
@@ -112,6 +126,24 @@ func _MetricService_Write_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MetricServiceServer).Write(ctx, req.(*Metric))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MetricService_WriteList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MetricList)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MetricServiceServer).WriteList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.MetricService/WriteList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MetricServiceServer).WriteList(ctx, req.(*MetricList))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -162,6 +194,10 @@ var MetricService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Write",
 			Handler:    _MetricService_Write_Handler,
+		},
+		{
+			MethodName: "WriteList",
+			Handler:    _MetricService_WriteList_Handler,
 		},
 		{
 			MethodName: "Poll",
