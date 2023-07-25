@@ -24,8 +24,6 @@ const _ = grpc.SupportPackageIsVersion7
 type MetricServiceClient interface {
 	Write(ctx context.Context, in *Metric, opts ...grpc.CallOption) (*MetricWriteResponse, error)
 	WriteList(ctx context.Context, in *MetricList, opts ...grpc.CallOption) (*MetricWriteResponse, error)
-	Poll(ctx context.Context, in *PointId, opts ...grpc.CallOption) (*Metric, error)
-	Select(ctx context.Context, in *MetricRequest, opts ...grpc.CallOption) (*MetricList, error)
 }
 
 type metricServiceClient struct {
@@ -54,32 +52,12 @@ func (c *metricServiceClient) WriteList(ctx context.Context, in *MetricList, opt
 	return out, nil
 }
 
-func (c *metricServiceClient) Poll(ctx context.Context, in *PointId, opts ...grpc.CallOption) (*Metric, error) {
-	out := new(Metric)
-	err := c.cc.Invoke(ctx, "/pb.MetricService/Poll", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *metricServiceClient) Select(ctx context.Context, in *MetricRequest, opts ...grpc.CallOption) (*MetricList, error) {
-	out := new(MetricList)
-	err := c.cc.Invoke(ctx, "/pb.MetricService/Select", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // MetricServiceServer is the server API for MetricService service.
 // All implementations must embed UnimplementedMetricServiceServer
 // for forward compatibility
 type MetricServiceServer interface {
 	Write(context.Context, *Metric) (*MetricWriteResponse, error)
 	WriteList(context.Context, *MetricList) (*MetricWriteResponse, error)
-	Poll(context.Context, *PointId) (*Metric, error)
-	Select(context.Context, *MetricRequest) (*MetricList, error)
 	mustEmbedUnimplementedMetricServiceServer()
 }
 
@@ -92,12 +70,6 @@ func (UnimplementedMetricServiceServer) Write(context.Context, *Metric) (*Metric
 }
 func (UnimplementedMetricServiceServer) WriteList(context.Context, *MetricList) (*MetricWriteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WriteList not implemented")
-}
-func (UnimplementedMetricServiceServer) Poll(context.Context, *PointId) (*Metric, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Poll not implemented")
-}
-func (UnimplementedMetricServiceServer) Select(context.Context, *MetricRequest) (*MetricList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Select not implemented")
 }
 func (UnimplementedMetricServiceServer) mustEmbedUnimplementedMetricServiceServer() {}
 
@@ -148,42 +120,6 @@ func _MetricService_WriteList_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MetricService_Poll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PointId)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MetricServiceServer).Poll(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MetricService/Poll",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MetricServiceServer).Poll(ctx, req.(*PointId))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MetricService_Select_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MetricRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MetricServiceServer).Select(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.MetricService/Select",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MetricServiceServer).Select(ctx, req.(*MetricRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // MetricService_ServiceDesc is the grpc.ServiceDesc for MetricService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -198,14 +134,6 @@ var MetricService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "WriteList",
 			Handler:    _MetricService_WriteList_Handler,
-		},
-		{
-			MethodName: "Poll",
-			Handler:    _MetricService_Poll_Handler,
-		},
-		{
-			MethodName: "Select",
-			Handler:    _MetricService_Select_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
